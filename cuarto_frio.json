@@ -1,0 +1,589 @@
+[
+    {
+        "id": "6aefc55a36c6d8c4",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "e1dfc5f7ed912e7f",
+        "type": "mqtt in",
+        "z": "6aefc55a36c6d8c4",
+        "name": "",
+        "topic": "home/temperature",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "45a7cc99a4cd1a9c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 100,
+        "wires": [
+            [
+                "10b79c73740357c5",
+                "c5e8567ae4d573fd",
+                "2297cd0b6dcada1f",
+                "d68129e6b5e617db"
+            ]
+        ]
+    },
+    {
+        "id": "a32e66fb125e7d65",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "random humedad",
+        "func": "// Genera un valor aleatorio para la temperatura entre 0 y 50\nvar randomTemperature = Math.floor(Math.random() * (50 - 0 + 1)) + 0;\n\n// Genera un valor aleatorio para la humedad entre 0 y 50\nvar randomHumidity = Math.floor(Math.random() * (50 - 0 + 1)) + 0;\n\n// Genera un intervalo de tiempo aleatorio (en milisegundos) entre 1 y 5 minutos\nvar randomInterval = Math.floor(Math.random() * (5 * 60 * 1000 - 1 * 60 * 1000 + 1)) + 1 * 60 * 1000;\n\n// Obtén la última fecha y hora del historial o establece la fecha actual si es el primer registro\nvar lastEntry = context.historicalData && context.historicalData.length > 0 \n    ? new Date(context.historicalData[context.historicalData.length - 1].fecha_hora) \n    : new Date();\n    \nvar now = new Date(lastEntry.getTime() + randomInterval); // Sumar el intervalo aleatorio a la última fecha\n\n// Crea un nuevo registro\nvar newEntry = { \n    \"sensor\": \"Sensor_A1\",\n    \"fecha\": now.toLocaleDateString(), \n    \"hora\": now.toLocaleTimeString(), \n    \"temperatura\": randomTemperature,\n    \"humedad\": randomHumidity,\n    \"fecha_hora\": now.toLocaleString() \n};\n\n// Asigna el nuevo registro al payload para su uso posterior\nmsg.payload = newEntry;\n\nreturn msg; // Devuelve el mensaje con el nuevo registro en el payload\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "583786a9e9ba6e31",
+        "type": "debug",
+        "z": "6aefc55a36c6d8c4",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 660,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "10b79c73740357c5",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "InsertDB",
+        "func": "// Obtén la fecha y hora actual\nvar now = new Date();\nmsg.payload = { \n    \"sensor\": \"Sensor_A1\",\n    \"fecha\": now.toLocaleDateString(), \n    \"temperatura\": msg.payload.temperature, \n    \"hora\": now.toLocaleTimeString()  ,\n    \"humedad\":msg.payload.humidity,\n    \"fecha_hora\": now.toLocaleString()  \n   };\nreturn msg;\n\n\n",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 240,
+        "wires": [
+            [
+                "2da07fbe4dd0b9ae"
+            ]
+        ]
+    },
+    {
+        "id": "c1718d2360fc7c99",
+        "type": "mongodb4",
+        "z": "6aefc55a36c6d8c4",
+        "clientNode": "7605c76799ab4e51",
+        "mode": "collection",
+        "collection": "almacen_hillo",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "",
+        "handleDocId": false,
+        "name": "",
+        "x": 780,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c5e8567ae4d573fd",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "temperatura",
+        "func": "//Suponiendo que msg.payload.humidity contiene el valor de la humidity\n//var randomHumidity = Math.floor(Math.random() * (50 - 0 + 1)) + 0;\nmsg.payload = msg.payload.temperature; // Asigna solo la humidity al payload\n//msg.payload= randomHumidity\nreturn msg; // Devuelve el mensaje con el nuevo payload",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 320,
+        "wires": [
+            [
+                "6f5325aa7beecb7d",
+                "0cb77ec4149b0b0c"
+            ]
+        ]
+    },
+    {
+        "id": "6f5325aa7beecb7d",
+        "type": "ui_chart",
+        "z": "6aefc55a36c6d8c4",
+        "name": "Temperature",
+        "group": "92a9cd27.99b9d",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "label": "Temperatura Cuarto Frio",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "50",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 710,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e9e6c14d5f2db936",
+        "type": "ui_gauge",
+        "z": "6aefc55a36c6d8c4",
+        "name": "Humidity",
+        "group": "92a9cd27.99b9d",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "gtype": "wave",
+        "title": "Humedad",
+        "label": "%",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b3d9",
+            "#0073e6",
+            "#001bd7"
+        ],
+        "seg1": "33",
+        "seg2": "66",
+        "diff": false,
+        "className": "",
+        "x": 700,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "2297cd0b6dcada1f",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "humedad",
+        "func": "//var randomHumidity = Math.floor(Math.random() * (80 - 20 + 1)) + 20;\n\n// Suponiendo que msg.payload.humidity contiene el valor de la humidity\nmsg.payload = msg.payload.humidity; // Asigna solo la humidity al payload\n//msg.payload = randomHumidity;\nreturn msg; // Devuelve el mensaje con el nuevo payload",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 400,
+        "wires": [
+            [
+                "e9e6c14d5f2db936"
+            ]
+        ]
+    },
+    {
+        "id": "0cb77ec4149b0b0c",
+        "type": "ui_gauge",
+        "z": "6aefc55a36c6d8c4",
+        "name": "",
+        "group": "92a9cd27.99b9d",
+        "order": 4,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperatura Almacén",
+        "label": "Centigrados",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "30",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 700,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "2da07fbe4dd0b9ae",
+        "type": "mongodb4",
+        "z": "6aefc55a36c6d8c4",
+        "clientNode": "818cd1dda6a44d91",
+        "mode": "collection",
+        "collection": "almacen_hillo",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "",
+        "handleDocId": false,
+        "name": "almacem_rt",
+        "x": 710,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f235934fe806904c",
+        "type": "inject",
+        "z": "6aefc55a36c6d8c4",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 390,
+        "y": 60,
+        "wires": [
+            [
+                "a32e66fb125e7d65"
+            ]
+        ]
+    },
+    {
+        "id": "9961389c8e77cb8e",
+        "type": "telegram receiver",
+        "z": "6aefc55a36c6d8c4",
+        "name": "receiver bot",
+        "bot": "78da2f50f99214fd",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 110,
+        "y": 580,
+        "wires": [
+            [
+                "232a341cfbb33aee"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "232a341cfbb33aee",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "Espera Mensaje Temperatura",
+        "func": "// Assuming msg.payload is your input message\nconst message = msg.payload;\n\n// Check if the message has the expected structure\nif (message && message.type === \"message\" && message.content === \"temperatura\") {\n    // Extract the temperature (modify as necessary based on actual structure)\n    const temperature = \"23\"; // Adjust this based on your actual data structure\n    \n    // Pass the temperature to the next node\n    msg.payload = temperature;\n    return msg;\n} else {\n    // Handle cases where the structure is not as expected\n    return null; // or you can send a different message if needed\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 580,
+        "wires": [
+            [
+                "5c70990fb40fe345",
+                "ed74475e5169a9c3"
+            ]
+        ]
+    },
+    {
+        "id": "b9e17969e9e4ac33",
+        "type": "telegram sender",
+        "z": "6aefc55a36c6d8c4",
+        "name": "Bot Recibe",
+        "bot": "78da2f50f99214fd",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 690,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ed74475e5169a9c3",
+        "type": "debug",
+        "z": "6aefc55a36c6d8c4",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "5c70990fb40fe345",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "body parameter",
+        "func": "// Create the message object\nmsg.payload = {\n    chatId: \"-4569731247\",  // Replace with the actual chat ID\n    type: \"message\",        // Message type\n    content: \"Current temperature is 22°C\" // Your actual message content\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 680,
+        "wires": [
+            [
+                "b9e17969e9e4ac33",
+                "583786a9e9ba6e31"
+            ]
+        ]
+    },
+    {
+        "id": "c2ae20d8d41a80de",
+        "type": "function",
+        "z": "6aefc55a36c6d8c4",
+        "name": "body parameter Canal",
+        "func": "// Create the message object\nmsg.payload = {\n    chatId: \"-1002339463495\",  // Replace with the actual chat ID\n    type: \"message\",        // Message type\n    content: \"Mensaje a Telegram Canal\" // Your actual message content\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 880,
+        "wires": [
+            [
+                "84e18e99c9e6440c"
+            ]
+        ]
+    },
+    {
+        "id": "4905e64ac3b661a1",
+        "type": "inject",
+        "z": "6aefc55a36c6d8c4",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 140,
+        "y": 860,
+        "wires": [
+            [
+                "c2ae20d8d41a80de",
+                "5c70990fb40fe345"
+            ]
+        ]
+    },
+    {
+        "id": "84e18e99c9e6440c",
+        "type": "telegram sender",
+        "z": "6aefc55a36c6d8c4",
+        "name": "",
+        "bot": "78da2f50f99214fd",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 680,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d68129e6b5e617db",
+        "type": "debug",
+        "z": "6aefc55a36c6d8c4",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 460,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "45a7cc99a4cd1a9c",
+        "type": "mqtt-broker",
+        "name": "InputDevServer",
+        "broker": "176.168.22.21",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "7605c76799ab4e51",
+        "type": "mongodb4-client",
+        "name": "",
+        "protocol": "mongodb",
+        "hostname": "176.168.22.21",
+        "port": "",
+        "dbName": "cuarto_frio",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-simple"
+    },
+    {
+        "id": "92a9cd27.99b9d",
+        "type": "ui_group",
+        "name": "Temperatura y Humedad",
+        "tab": "b2b27a415fe41094",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "818cd1dda6a44d91",
+        "type": "mongodb4-client",
+        "name": "cuarto_frio_real",
+        "protocol": "mongodb",
+        "hostname": "176.168.22.21",
+        "port": "",
+        "dbName": "cuarto_frio_rt",
+        "appName": "",
+        "authSource": "",
+        "authMechanism": "DEFAULT",
+        "tls": false,
+        "tlsCAFile": "",
+        "tlsCertificateKeyFile": "",
+        "tlsInsecure": false,
+        "connectTimeoutMS": "30000",
+        "socketTimeoutMS": "0",
+        "minPoolSize": "0",
+        "maxPoolSize": "100",
+        "maxIdleTimeMS": "0",
+        "uri": "",
+        "advanced": "{}",
+        "uriTabActive": "tab-uri-simple"
+    },
+    {
+        "id": "78da2f50f99214fd",
+        "type": "telegram bot",
+        "botname": "@GrupacDevBot",
+        "usernames": "",
+        "chatids": "",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "addressfamily": "",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "b2b27a415fe41094",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
