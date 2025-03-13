@@ -29,8 +29,7 @@ Este proyecto utiliza un **ESP8266** junto con un **sensor de humedad y temperat
 
 ![image](https://github.com/user-attachments/assets/bb79e92f-d495-4ffe-8eb3-8e929e91f368)
 
-
-![Recording 2025-03-13 at 16 11 53](https://github.com/user-attachments/assets/f95ff31e-3feb-43fa-9424-0787b1754a36)
+![Recording 2025-03-13 at 16 11 53](https://github.com/user-attachments/assets/1f9686d7-f2dd-4663-8b4d-b0be9d4f4708)
 
 ## Contacto
 Para más información o mejoras, puedes contribuir o contactar a través de GitHub.
