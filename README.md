@@ -36,6 +36,11 @@ Integrando Lectura de sensor por vision de computadora.
 
 ![image](https://github.com/user-attachments/assets/dccdfaf7-4782-465e-b431-add2006e5803)
 
+referencia codigo por referencia.
+
+Mejora para Tkinter
+
+![image](https://github.com/user-attachments/assets/7266c7fe-bac8-4b9a-b758-67c4a1a16a28)
 
 
 
