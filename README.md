@@ -42,6 +42,7 @@ Mejora para Tkinter
 
 ![image](https://github.com/user-attachments/assets/7266c7fe-bac8-4b9a-b758-67c4a1a16a28)
 
+![WhatsApp Image 2025-05-28 at 12 58 48 PM](https://github.com/user-attachments/assets/a2685ccf-de90-4368-94e1-258d533bf255)
 
 
 ## Contacto
