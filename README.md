@@ -31,6 +31,14 @@ Este proyecto utiliza un **ESP8266** junto con un **sensor de humedad y temperat
 
 ![Recording 2025-03-13 at 16 11 53](https://github.com/user-attachments/assets/1f9686d7-f2dd-4663-8b4d-b0be9d4f4708)
 
+
+Integrando Lectura de sensor por vision de computadora.
+
+![image](https://github.com/user-attachments/assets/dccdfaf7-4782-465e-b431-add2006e5803)
+
+
+
+
 ## Contacto
 Para más información o mejoras, puedes contribuir o contactar a través de GitHub.
 
